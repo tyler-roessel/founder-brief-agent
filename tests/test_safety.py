@@ -40,6 +40,15 @@ def test_pending_approval_phrasings_remain_visible(text):
     assert "approval needed" in analyze(text)["people"]["Avery"]["blockers"]
 
 
+@pytest.mark.parametrize("text", [
+    "We are no longer waiting for legal approval.",
+    "We are not waiting for legal approval.",
+    "We are not waiting on legal review.",
+])
+def test_negated_approval_waits_do_not_create_open_concerns(text):
+    assert analyze(text)["people"]["Avery"]["blockers"] == []
+
+
 def test_explicit_approve_verb_is_detected():
     assert "approval needed" in analyze("Need someone to approve the conversion copy")["people"]["Avery"]["blockers"]
 

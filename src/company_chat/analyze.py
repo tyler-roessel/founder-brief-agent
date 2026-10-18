@@ -21,8 +21,8 @@ BLOCKER_PATTERNS = {
 }
 
 RESOLVED_PATTERNS = {
-    "approval needed": r"\b(?:(?:approval|review)\s+(?:is\s+)?(?:received|complete|completed|granted)|approved|no\s+(?:approval|review)\s+(?:needed|required))\b",
-    "blocked": r"\b(?:no longer (?:blocked|stuck|waiting)|not blocked|unblocked|(?:blocker|issue)\s+(?:is\s+)?resolved)\b",
+    "approval needed": r"\b(?:(?:approval|review)\s+(?:is\s+)?(?:received|complete|completed|granted)|approved|no\s+(?:approval|review)\s+(?:needed|required)|(?:no longer|not)\s+waiting\s+(?:for|on)\s+(?:\w+\s+){0,3}(?:approval|review))\b",
+    "blocked": r"\b(?:(?:no longer|not) (?:blocked|stuck|waiting)|unblocked|(?:blocker|issue)\s+(?:is\s+)?resolved)\b",
     "ownership unclear": r"\b(?:(?:ownership|owner)\s+(?:is\s+)?(?:clear|assigned|confirmed)|no\s+(?:ownership|owner)\s+issue)\b",
 }
 
