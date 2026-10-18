@@ -25,6 +25,22 @@ def test_separate_active_issue_survives_a_resolved_clause():
     assert result["people"]["Avery"]["blockers"] == ["approval needed", "blocked"]
 
 
+def test_resolved_approval_does_not_hide_an_independent_request():
+    result = analyze("Approval received for pricing, need approval for the launch email")
+    assert result["people"]["Avery"]["blockers"] == ["approval needed"]
+    assert result["people"]["Avery"]["blocker_evidence"]["approval needed"] == ["need approval for the launch email"]
+
+
+def test_explicit_approve_verb_is_detected():
+    assert "approval needed" in analyze("Need someone to approve the conversion copy")["people"]["Avery"]["blockers"]
+
+
+def test_plural_customer_and_deal_terms_keep_their_commercial_meaning():
+    result = analyze("Customers signed new deals")["people"]["Avery"]
+    assert "sales" in result["workstreams"]
+    assert "customer delivery impact" in result["commercial_relevance"]
+
+
 def test_blocker_is_rendered_with_its_actual_evidence():
     messages = normalize_messages([
         {"user": "Avery", "text": "Published the pricing page."},

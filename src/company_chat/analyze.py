@@ -8,14 +8,14 @@ from typing import Any
 
 
 WORKSTREAM_KEYWORDS = {
-    "sales": {"sales", "demo", "customer", "pipeline", "call", "deal", "trial"},
-    "marketing": {"marketing", "post", "launch", "published", "pricing", "conversion", "signup", "signups"},
-    "operations": {"ops", "operation", "support", "queue", "migration", "process", "cleanup"},
-    "product": {"product", "feature", "bug", "release", "website", "landing"},
+    "sales": {"sales", "demo", "demos", "customer", "customers", "pipeline", "pipelines", "call", "calls", "deal", "deals", "trial", "trials"},
+    "marketing": {"marketing", "post", "posts", "launch", "launches", "published", "pricing", "conversion", "conversions", "signup", "signups"},
+    "operations": {"ops", "operation", "operations", "support", "queue", "queues", "migration", "migrations", "process", "processes", "cleanup"},
+    "product": {"product", "products", "feature", "features", "bug", "bugs", "release", "releases", "website", "websites", "landing"},
 }
 
 BLOCKER_PATTERNS = {
-    "approval needed": r"\b(?:(?:need|needs|awaiting|pending|waiting for)\s+(?:\w+\s+){0,3}(?:approval|review)|(?:approval|review)\s+(?:(?:is|still)\s+)?(?:needed|required|pending))\b",
+    "approval needed": r"\b(?:(?:need|needs|awaiting|pending|waiting for)\s+(?:\w+\s+){0,3}(?:approval|approve|review)|(?:approval|review)\s+(?:(?:is|still)\s+)?(?:needed|required|pending))\b",
     "blocked": r"\b(?:blocked|stuck|waiting)\b",
     "ownership unclear": r"\b(?:(?:ownership|owner)\s+(?:is\s+)?(?:unclear|missing|unassigned)|unclear\s+(?:owner|ownership)|(?:need|needs|missing|no|without)\s+(?:\w+\s+){0,3}owner)\b",
 }
@@ -27,9 +27,9 @@ RESOLVED_PATTERNS = {
 }
 
 COMMERCIAL_KEYWORDS = {
-    "conversion or pipeline impact": {"conversion", "signup", "signups", "demo", "pipeline", "trial", "revenue"},
-    "customer delivery impact": {"customer", "migration", "support", "launch"},
-    "marketing distribution impact": {"campaign"},
+    "conversion or pipeline impact": {"conversion", "conversions", "signup", "signups", "demo", "demos", "pipeline", "pipelines", "trial", "trials", "revenue"},
+    "customer delivery impact": {"customer", "customers", "migration", "migrations", "support", "launch", "launches"},
+    "marketing distribution impact": {"campaign", "campaigns"},
 }
 
 
@@ -99,7 +99,12 @@ def _matches(text: str, groups: dict[str, set[str]]) -> set[str]:
 def _blocker_mentions(text: str) -> dict[str, list[str]]:
     """Find explicit concerns; do not infer current project state from chat."""
     found: dict[str, list[str]] = {}
-    for clause in re.split(r"[.!?;]+|\bbut\b|\bhowever\b", text, flags=re.IGNORECASE):
+    split = (
+        r"[.!?;]+|\b(?:but|however)\b|"
+        r",\s*(?:and\s+)?(?=(?:please|we|they|i|need|needs|waiting|approval|ownership|owner)\b)|"
+        r"\band\s+(?=(?:please|we|they|i|need|needs|waiting|approval|ownership|owner)\b)"
+    )
+    for clause in re.split(split, text, flags=re.IGNORECASE):
         clause = clause.strip()
         lowered = clause.lower().replace("’", "'")
         for label, pattern in BLOCKER_PATTERNS.items():
