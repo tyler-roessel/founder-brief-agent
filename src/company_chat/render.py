@@ -11,6 +11,8 @@ def render_daily_brief(analysis: dict[str, Any], voice: FounderVoice) -> str:
     lines = [
         "# Company Chat Founder Brief",
         "",
+        "Analysis: deterministic rules. Concerns are source mentions, not verified current status.",
+        "",
         "## Bottom line",
         _bottom_line(analysis),
         "",
@@ -34,7 +36,9 @@ def render_weekly_meeting_prep(analysis: dict[str, Any], voice: FounderVoice) ->
         commercial = ", ".join(data["commercial_relevance"]) or "commercial impact unclear"
         blocker = ", ".join(data["blockers"]) or "no explicit blocker"
         lines.append(f"- Ask {person}: what is the next owned step, and how does it connect to commercial impact ({commercial})?")
-        lines.append(f"  Evidence: {data['evidence'][0]}")
+        lines.append(f"  Evidence: {data['evidence'][-1]}")
+        for label, evidence in data["blocker_evidence"].items():
+            lines.append(f"  Concern evidence ({label}): {' | '.join(evidence)}")
         lines.append(f"  Watch: {blocker}.")
     lines.extend(
         [
@@ -61,8 +65,12 @@ def _person_lines(person: str, data: dict[str, Any]) -> list[str]:
     commercial = ", ".join(data["commercial_relevance"]) or "commercial impact unclear"
     return [
         f"- {person}",
-        f"  Evidence: {data['evidence'][0]}",
+        f"  Evidence: {' | '.join(data['evidence'])}",
         f"  Workstream: {workstreams}.",
-        f"  Needs attention: {blockers}.",
+        f"  Concerns to review: {blockers}.",
+        *[
+            f"  Concern evidence ({label}): {' | '.join(evidence)}"
+            for label, evidence in data["blocker_evidence"].items()
+        ],
         f"  Commercial read: {commercial}.",
     ]

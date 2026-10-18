@@ -4,6 +4,19 @@ This repo is a public showcase of a company-chat operating layer. It takes Slack
 
 The purpose is simple: help a founder understand what is happening across the team without reading every chat message or walking into meetings cold.
 
+## Executable Scope
+
+This offline sample uses local JSON, deterministic rules, and Markdown templates. It has no live Slack connection, model inference, or scheduling.
+
+- Topics match whole words.
+- Explicit concerns exclude common resolved phrases such as "no longer blocked," "approval received," and "ownership is clear."
+- Every concern includes the clause that produced it.
+- Concern flags are mentions to review, not verified current project state. Chronology, unrelated threads, sarcasm, and conflicting updates are not reconciled.
+- The voice profile supplies rendering guidance rather than model-based voice adaptation.
+- Missing updates mean missing visibility, not poor performance.
+
+Use Python 3.10+. Install the test dependency with `python3 -m pip install -r requirements.txt`.
+
 ## What This Demonstrates
 
 - Chat context normalization from Slack-like exports.
