@@ -31,6 +31,15 @@ def test_resolved_approval_does_not_hide_an_independent_request():
     assert result["people"]["Avery"]["blocker_evidence"]["approval needed"] == ["need approval for the launch email"]
 
 
+@pytest.mark.parametrize("text", [
+    "Approval received for pricing, still need approval for the launch email.",
+    "Waiting on legal approval.",
+    "Can you approve the launch?",
+])
+def test_pending_approval_phrasings_remain_visible(text):
+    assert "approval needed" in analyze(text)["people"]["Avery"]["blockers"]
+
+
 def test_explicit_approve_verb_is_detected():
     assert "approval needed" in analyze("Need someone to approve the conversion copy")["people"]["Avery"]["blockers"]
 

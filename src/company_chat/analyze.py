@@ -15,7 +15,7 @@ WORKSTREAM_KEYWORDS = {
 }
 
 BLOCKER_PATTERNS = {
-    "approval needed": r"\b(?:(?:need|needs|awaiting|pending|waiting for)\s+(?:\w+\s+){0,3}(?:approval|approve|review)|(?:approval|review)\s+(?:(?:is|still)\s+)?(?:needed|required|pending))\b",
+    "approval needed": r"\b(?:(?:need|needs|awaiting|pending|waiting (?:for|on))\s+(?:\w+\s+){0,3}(?:approval|approve|review)|(?:approval|review)\s+(?:(?:is|still)\s+)?(?:needed|required|pending)|(?:can|could|would|will)\s+you\s+(?:please\s+)?(?:approve|review)|please\s+(?:approve|review))\b",
     "blocked": r"\b(?:blocked|stuck|waiting)\b",
     "ownership unclear": r"\b(?:(?:ownership|owner)\s+(?:is\s+)?(?:unclear|missing|unassigned)|unclear\s+(?:owner|ownership)|(?:need|needs|missing|no|without)\s+(?:\w+\s+){0,3}owner)\b",
 }
@@ -108,6 +108,11 @@ def _blocker_mentions(text: str) -> dict[str, list[str]]:
         clause = clause.strip()
         lowered = clause.lower().replace("’", "'")
         for label, pattern in BLOCKER_PATTERNS.items():
-            if re.search(pattern, lowered) and not re.search(RESOLVED_PATTERNS[label], lowered):
+            resolved = list(re.finditer(RESOLVED_PATTERNS[label], lowered))
+            active = [
+                match for match in re.finditer(pattern, lowered)
+                if not any(match.start() < end.end() and end.start() < match.end() for end in resolved)
+            ]
+            if active:
                 found.setdefault(label, []).append(clause)
     return found
