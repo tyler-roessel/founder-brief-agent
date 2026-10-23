@@ -23,4 +23,4 @@ class FounderVoice:
         return cls(principles=principles)
 
     def opening(self) -> str:
-        return "Be direct, commercial, and kind without softening accountability."
+        return self.principles[0] if self.principles else "Keep statements grounded in visible evidence."

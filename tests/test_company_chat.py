@@ -74,7 +74,7 @@ def test_render_daily_brief_uses_founder_voice_and_sections():
     assert "Bottom line" in brief
     assert "Avery" in brief
     assert "approval needed" in brief
-    assert "Keep it direct" not in brief
+    assert voice.principles[0] in brief
 
 
 def test_render_weekly_meeting_prep_creates_talking_points():
